@@ -1,3 +1,5 @@
 {
-    "require": "@babel/register"
+    "require": "@babel/register",
+    "recursive": true,
+    "spec": "test/features"
 }

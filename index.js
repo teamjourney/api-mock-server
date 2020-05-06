@@ -2,14 +2,17 @@ import server from './src/server';
 import router from './src/router';
 import logger from './src/logger';
 
-const start = async (port) => server.start(port);
-const stop = () => server.stop();
-
-const mock = (request, response) => router.add(request, response);
 const reset = () => {
   router.reset();
   logger.reset();
 };
+const start = (port) => server.start(port);
+const stop = () => {
+  reset();
+  server.stop();
+};
+
+const mock = (request, response) => router.add(request, response);
 
 const getUnhandledRequests = () => logger.getUnhandledRequests();
 
