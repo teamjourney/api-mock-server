@@ -8,6 +8,9 @@ export default (possibleMatches) => (actualRequest, actualResponse) => {
 
   if (match) {
     const { response } = match;
+
+    logger.logHandledRequest(match);
+
     return actualResponse.set(response.headers).status(response.status).json(response.body);
   }
 

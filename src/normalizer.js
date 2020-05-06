@@ -1,3 +1,4 @@
+import { pickBy, identity } from 'lodash';
 import { parse } from 'querystring';
 
 const normalizeMethod = (request) => (request.body ? 'POST' : 'GET');
@@ -7,15 +8,15 @@ const normalizeQuery = (request) => {
 };
 const normalizePath = (request) => request.path.split('?')[0];
 
-export const normalizeRequest = (request) => ({
+export const normalizeRequest = (request) => pickBy({
   method: normalizeMethod(request),
   query: normalizeQuery(request),
   ...request,
   path: normalizePath(request),
-});
+}, identity);
 
-export const normalizeResponse = (response) => ({
+export const normalizeResponse = (response) => pickBy({
   status: 200,
-  headers: [],
+  headers: null,
   ...response,
-});
+}, identity);

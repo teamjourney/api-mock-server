@@ -46,6 +46,8 @@ const add = (request, response) => {
   build();
 };
 
+const get = () => routes;
+
 const reset = () => {
   routes = [];
   build();
@@ -61,5 +63,6 @@ export const middleware = (request, response, next) => {
 
 export default {
   add,
+  get,
   reset,
 };

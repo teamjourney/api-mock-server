@@ -3,6 +3,7 @@ import { isEmpty, omit } from 'lodash';
 const ignoredHeaders = ['accept', 'connection', 'host', 'content-length', 'content-type'];
 
 let unhandledRequests = [];
+let handledRequests = [];
 
 const convertExpressRequestToMockRequest = (expressRequest) => {
   const request = {
@@ -31,14 +32,23 @@ const logUnhandledRequest = (expressRequest) => {
   });
 };
 
+const logHandledRequest = (match) => {
+  handledRequests.push(match);
+};
+
 const getUnhandledRequests = () => unhandledRequests;
+
+const getHandledRequests = () => handledRequests;
 
 const reset = () => {
   unhandledRequests = [];
+  handledRequests = [];
 };
 
 export default {
   logUnhandledRequest,
+  logHandledRequest,
   getUnhandledRequests,
+  getHandledRequests,
   reset,
 };
