@@ -1,4 +1,5 @@
 import chakram, { expect } from 'chakram';
+import { assert } from 'chai';
 
 import server from '../src/server';
 
@@ -104,6 +105,17 @@ describe('Server', () => {
         expect(response).to.have.status(200);
       });
 
+      it('should throw an exception with multiple identical mock requests', () => {
+        server.mock({ path: '/endpoint' });
+
+        const message = `Request matching {
+  "method": "GET",
+  "path": "/endpoint"
+} already mocked`;
+
+        assert.throws(() => server.mock({ path: '/endpoint' }), message);
+      });
+
       it('should support response bodies', async () => {
         server.mock({ path: '/return-something' }, { body: { field: 'value' } });
 
@@ -199,6 +211,40 @@ describe('Server', () => {
 
           expect(response).to.have.status(200);
         });
+
+        it('should match correctly if multiple mocks are specified with the same path but different headers', async () => {
+          server.mock(
+            { path: '/something', headers: { 'x-data': 'something' } },
+            { status: 201 },
+          );
+          server.mock(
+            { path: '/something', headers: { 'x-data': 'something else' } },
+            { status: 204 },
+          );
+
+          const firstResponse = await chakram.get('/something', { headers: { 'x-data': 'something' } });
+          const secondResponse = await chakram.get('/something', { headers: { 'x-data': 'something else' } });
+
+          expect(firstResponse).to.have.status(201);
+          expect(secondResponse).to.have.status(204);
+        });
+
+        it('should match correctly if multiple mocks are specified with the same path but different methods', async () => {
+          server.mock(
+            { path: '/something', method: 'GET' },
+            { status: 200 },
+          );
+          server.mock(
+            { path: '/something', method: 'POST' },
+            { status: 201 },
+          );
+
+          const firstResponse = await chakram.get('/something');
+          const secondResponse = await chakram.post('/something');
+
+          expect(firstResponse).to.have.status(200);
+          expect(secondResponse).to.have.status(201);
+        });
       });
     });
 
@@ -235,6 +281,23 @@ describe('Server', () => {
         expect(response).to.have.status(200);
       });
 
+      it('should match correctly if multiple mocks are specified with the same path but different query strings', async () => {
+        server.mock(
+          { path: '/something', query: { field: 'value' } },
+          { status: 200 },
+        );
+        server.mock(
+          { path: '/something', query: { field: 'another value' } },
+          { status: 201 },
+        );
+
+        const firstResponse = await chakram.get('/something?field=value');
+        const secondResponse = await chakram.get('/something?field=another value');
+
+        expect(firstResponse).to.have.status(200);
+        expect(secondResponse).to.have.status(201);
+      });
+
       it('should auto detect query string parameters', async () => {
         server.mock({ path: '/something?page=1&perPage=20' });
 
@@ -254,6 +317,12 @@ describe('Server', () => {
         const response = await chakram.post('/post-request');
 
         expect(response).to.have.status(201);
+      });
+
+      it('should not match unmocked POST requests', async () => {
+        const response = await chakram.post('/post-request');
+
+        expect(response).to.have.status(501);
       });
 
       it('should support POST request bodies', async () => {
@@ -332,6 +401,23 @@ describe('Server', () => {
 
         expect(response).to.have.status(201);
       });
+
+      it('should match correctly if multiple mocks are specified with the same path but different bodies', async () => {
+        server.mock(
+          { path: '/something', body: { data: 'something' } },
+          { status: 200 },
+        );
+        server.mock(
+          { path: '/something', body: { data: 'something else'} },
+          { status: 201 },
+        );
+
+        const firstResponse = await chakram.post('/something', { data: 'something' });
+        const secondResponse = await chakram.post('/something', { data: 'something else' });
+
+        expect(firstResponse).to.have.status(200);
+        expect(secondResponse).to.have.status(201);
+      });
     });
 
     describe('PUT requests', () => {
@@ -371,6 +457,120 @@ describe('Server', () => {
 
         expect(response).to.have.status(204);
       });
+    });
+  });
+
+  describe('getUnhandledRequests', () => {
+    const defaultPort = 9100;
+
+    before(() => {
+      chakram.setRequestDefaults({
+        baseUrl: `http://localhost:${defaultPort}`,
+      });
+
+      server.start(defaultPort);
+    });
+
+    beforeEach(async () => server.reset());
+
+    after(() => {
+      server.stop();
+      chakram.clearRequestDefaults();
+    });
+
+    it('should return any unhandled paths', async () => {
+      await chakram.get('/endpoint');
+
+      const requests = server.getUnhandledRequests();
+
+      const expected = [
+        {
+          request: {
+            path: '/endpoint',
+            method: 'GET',
+          },
+        },
+      ];
+
+      assert.deepEqual(expected, requests);
+    });
+
+    it('should not include any requests that were handled', async () => {
+      server.mock(
+        { path: '/some-endpoint' },
+      );
+
+      await chakram.get('/endpoint');
+      await chakram.get('/some-endpoint');
+
+      const requests = server.getUnhandledRequests();
+      const expected = [
+        {
+          request: {
+            path: '/endpoint',
+            method: 'GET',
+          },
+        },
+      ];
+
+      assert.deepEqual(expected, requests);
+    });
+
+    it('should return any unmatched requests based on request body', async () => {
+      await chakram.post('/endpoint', { data: 'something else' });
+
+      const requests = server.getUnhandledRequests();
+      const expected = [
+        {
+          request: {
+            path: '/endpoint',
+            method: 'POST',
+            body: {
+              data: 'something else',
+            },
+          },
+        },
+      ];
+
+      assert.deepEqual(expected, requests);
+    });
+
+    it('should return any unmatched requests based on query string', async () => {
+      await chakram.get('/endpoint?page=11');
+
+      const requests = server.getUnhandledRequests();
+      const expected = [
+        {
+          request: {
+            path: '/endpoint',
+            method: 'GET',
+            query: {
+              page: '11',
+            },
+          },
+        },
+      ];
+
+      assert.deepEqual(expected, requests);
+    });
+
+    it('should return any unmatched requests based on headers', async () => {
+      await chakram.get('/endpoint', { headers: { 'X-Something': 'Something' } });
+
+      const requests = server.getUnhandledRequests();
+      const expected = [
+        {
+          request: {
+            path: '/endpoint',
+            method: 'GET',
+            headers: {
+              'x-something': 'Something',
+            },
+          },
+        },
+      ];
+
+      assert.deepEqual(expected, requests);
     });
   });
 });

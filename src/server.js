@@ -1,5 +1,6 @@
 import express from 'express';
 import router from './router';
+import logger from './logger';
 
 let server;
 
@@ -14,11 +15,16 @@ const start = async (port) => {
 };
 const stop = () => server.close();
 const mock = (request, response) => router.add(request, response);
-const reset = () => router.reset();
+const reset = () => {
+  router.reset();
+  logger.reset();
+};
+const getUnhandledRequests = () => logger.getUnhandledRequests();
 
 export default {
   start,
   stop,
   mock,
   reset,
+  getUnhandledRequests,
 };

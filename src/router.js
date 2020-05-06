@@ -1,32 +1,48 @@
 import { Router } from 'express';
+import { groupBy, forIn, find } from 'lodash';
 
 import { normalizeRequest, normalizeResponse } from './normalizer';
 import handler from './handler';
-
-const defaultRoute = { request: { path: '*' }, response: { status: 501 } };
+import logger from './logger';
 
 let routes = [];
 let router;
 
-const addToRouter = (route) => {
-  const request = normalizeRequest(route.request);
-  const response = normalizeResponse(route.response);
-
-  const method = request.method.toLowerCase();
-
-  router[method](request.path, handler(request, response));
+const addToRouter = (path, method, possibleRoutes) => {
+  router[method.toLowerCase()](path, handler(possibleRoutes));
 };
 
 const build = () => {
   router = Router();
 
-  routes.forEach(addToRouter);
+  const byPath = groupBy(routes, 'request.path');
 
-  addToRouter(defaultRoute);
+  forIn(byPath, (routesForPath, path) => {
+    const byMethod = groupBy(routesForPath, 'request.method');
+
+    forIn(byMethod, (routesForMethod, method) => {
+      addToRouter(path, method, routesForMethod);
+    });
+  });
+
+  router.all('*', (request, response) => {
+    logger.logUnhandledRequest(request);
+
+    response.status(501).end();
+  });
 };
 
 const add = (request, response) => {
-  routes.push({ request, response });
+  const normalized = {
+    request: normalizeRequest(request),
+    response: normalizeResponse(response),
+  };
+
+  if (find(routes, normalized)) {
+    throw Error(`Request matching ${JSON.stringify(normalized.request, 0, 2)} already mocked`);
+  }
+
+  routes.push(normalized);
   build();
 };
 
