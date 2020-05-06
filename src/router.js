@@ -51,7 +51,7 @@ const reset = () => {
   build();
 };
 
-const middleware = (request, response, next) => {
+export const middleware = (request, response, next) => {
   if (!router) {
     build();
   }
@@ -62,5 +62,4 @@ const middleware = (request, response, next) => {
 export default {
   add,
   reset,
-  middleware,
 };

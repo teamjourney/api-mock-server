@@ -1,7 +1,7 @@
 import chakram, { expect } from 'chakram';
 import { assert } from 'chai';
 
-import server from '../src/server';
+import server from '..';
 
 describe('Server', () => {
   describe('start', () => {
