@@ -6,6 +6,10 @@
   "author": "Tim Wardle",
   "license": "Unlicensed",
   "private": true,
+  "dependencies": {
+    "express": "^4.17.1",
+    "lodash": "^4.17.15"
+  },
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
@@ -15,13 +19,16 @@
     "eslint": "6.8.0",
     "eslint-config-airbnb-base": "14.1.0",
     "eslint-plugin-import": "^2.20.1",
+    "husky": "^4.2.5",
     "mocha": "^7.1.2"
   },
   "scripts": {
-    "test": "mocha --"
+    "test": "mocha --",
+    "lint": "eslint . --"
   },
-  "dependencies": {
-    "express": "^4.17.1",
-    "lodash": "^4.17.15"
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn test && yarn lint"
+    }
   }
 }

@@ -408,7 +408,7 @@ describe('Server', () => {
           { status: 200 },
         );
         server.mock(
-          { path: '/something', body: { data: 'something else'} },
+          { path: '/something', body: { data: 'something else' } },
           { status: 201 },
         );
 
