@@ -24,16 +24,17 @@ TBC
 ## Usage
 
 ```javascript
-import server from 'api-mock-server';
+const server = require('api-mock-server');
 
-await server.start(9001);
+server.start(9001)
+    .then(() => {
+        server.mock(
+            { path: '/my-endpoint' },
+            { body: { data: 'something' } },
+        );
 
-server.mock(
-    { path: '/my-endpoint' },
-    { body: { data: 'something' } },
-);
+        // Call GET http://localhost:9001/my-endpoint here
 
-// Call GET http://localhost:9001/my-endpoint here
-
-server.stop();
+        server.stop();
+    });
 ```
