@@ -5,8 +5,39 @@ API mocking library that runs as a real HTTP server in Node.js
 API Mock Server can be used to test code that performs HTTP requests without
 calling the real service and allows full control over the request and responses.
 
-<!-- toc -->
-<!-- tocstop -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [How it works](#how-it-works)
+- [Install](#install)
+  - [Node version support](#node-version-support)
+- [Usage](#usage)
+  - [Starting the server](#starting-the-server)
+  - [Stopping the server](#stopping-the-server)
+  - [Resetting the server](#resetting-the-server)
+  - [Defining mocks](#defining-mocks)
+    - [Unmocked requests](#unmocked-requests)
+    - [Duplicate mocks](#duplicate-mocks)
+  - [Mocking requests](#mocking-requests)
+    - [Specifying paths](#specifying-paths)
+    - [Specifying HTTP methods](#specifying-http-methods)
+    - [Specifying query strings](#specifying-query-strings)
+    - [Specifying request bodies](#specifying-request-bodies)
+    - [Specifying request headers](#specifying-request-headers)
+  - [Mocking Responses](#mocking-responses)
+    - [Specifying response statuses](#specifying-response-statuses)
+    - [Specifying response bodies](#specifying-response-bodies)
+    - [Specifying response headers](#specifying-response-headers)
+  - [Recording](#recording)
+    - [Getting unhandled requests](#getting-unhandled-requests)
+    - [Getting handled requests](#getting-handled-requests)
+    - [Getting uncalled mocks](#getting-uncalled-mocks)
+- [Current Limitations](#current-limitations)
+- [Credits](#credits)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## How it works
 
