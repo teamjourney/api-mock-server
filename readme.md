@@ -5,6 +5,9 @@ API mocking library that runs as a real HTTP server in Node.js
 API Mock Server can be used to test code that performs HTTP requests without
 calling the real service and allows full control over the request and responses.
 
+<!-- toc -->
+<!-- tocstop -->
+
 ## How it works
 
 API Mock Server runs on a real port and responds to real HTTP requests. This
