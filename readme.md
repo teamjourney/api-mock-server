@@ -239,6 +239,88 @@ server.mock({ path: '/my-endpoint' }, { headers: { 'x-foo': 'bar' } });
 The response will always contain the specified headers but may also contain
 additional headers automatically added by the server.
 
+### Recording
+
+All mocks and requests are logged by the server which provides easy access to
+this information in a format similar to the way mocks are defined. This
+structure is intended to make adding and adjusting mocks easier.
+
+#### Getting unhandled requests
+
+To get any requests that were not handled by a mock, call
+`getUnhandledRequests`.
+
+```javascript
+server.getUnhandledRequests();
+```
+
+This will return an array of requests in the order that they occurred. For
+example:
+
+```json
+[
+    {
+        "request": {
+            "path": "/my-endpoint",
+            "method": "GET"
+        }
+    },
+    ...
+]
+```
+
+#### Getting handled requests
+
+To get requests that were handled by mocks including what response was returned,
+call `getHandledRequests`.
+
+```javascript
+server.getHandledRequests();
+```
+
+This will return an array of requests and responses in the order that they
+occurred. For example:
+
+```json
+[
+    {
+        "request": {
+            "path": "/my-endpoint",
+            "method": "GET"
+        },
+        "response": {
+            "status": 200
+        }
+    }
+    ...
+]
+```
+
+#### Getting uncalled mocks
+
+To get a list of any mocks that have not been called, call `getUncalledMocks`.
+
+```javascript
+server.getUncalledMocks();
+```
+
+This will return an array of uncalled mocks in the order that they were defined.
+For example:
+
+```json
+[
+    {
+        "request": {
+            "path": "GET",
+            "method": "/endpoint"
+        },
+        "response": {
+            "status": 200
+        }
+    }
+]
+```
+
 ## Current Limitations
 
 * There is no support for non-JSON request or response bodies
