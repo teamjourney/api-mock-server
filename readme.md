@@ -265,7 +265,6 @@ example:
             "method": "GET"
         }
     },
-    ...
 ]
 ```
 
@@ -292,7 +291,6 @@ occurred. For example:
             "status": 200
         }
     }
-    ...
 ]
 ```
 
