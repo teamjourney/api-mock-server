@@ -200,6 +200,45 @@ server.mock({ path: '/my-endpoint', headers: { 'X-Foo', 'bar' } });
 Requests will be handled if all the headers specified in the mock match. Any
 other headers on the request will match, regardless of the headers.
 
+### Mocking Responses
+
+Customise the response for a particular mock by passing an object as the second
+argument to `mock` to define the response shape.
+
+The response argument is optional. If no response is provided the mock will
+return a `200` status with an empty body.
+
+#### Specifying response statuses
+
+The response status can be set by providing a `status` property.
+
+```javascript
+server.mock({ path: '/my-endpoint' }, { status: 201 });
+```
+
+If no status is specified the response will default to `200`.
+
+#### Specifying response bodies
+
+The response body can be set by providing a `body` property.
+
+```javascript
+server.mock({ path: '/my-endpoint' }, { body: { foo: 'bar' } });
+```
+
+#### Specifying response headers
+
+The response headers can be set by providing a `headers` property which should
+be an object with header type and value being object properties and values
+respectively.
+
+```javascript
+server.mock({ path: '/my-endpoint' }, { headers: { 'x-foo': 'bar' } });
+```
+
+The response will always contain the specified headers but may also contain
+additional headers automatically added by the server.
+
 ## Current Limitations
 
 * There is no support for non-JSON request or response bodies
