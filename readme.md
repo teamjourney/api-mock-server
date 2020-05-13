@@ -325,3 +325,18 @@ For example:
 * The server cannot be run with any hostname other than `localhost`
 * The path matcher uses Express routes under the hood so theoretically any
 pattern that Express supports should work, but this functionality is untested
+
+## Credits
+
+This library was inspired and influenced by:
+
+* [nock](https://github.com/nock/nock)
+* [MockServer](https://www.mock-server.com/)
+* [Stubborn](https://github.com/ybonnefond/stubborn)
+* [Dyson](https://github.com/webpro/dyson)
+* [mock-http-server](https://github.com/spreaker/node-mock-http-server)
+* [Mockery](http://docs.mockery.io/en/latest/)
+
+## License
+
+[MIT](LICENSE)

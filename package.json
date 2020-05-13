@@ -4,7 +4,7 @@
   "description": "Tool to allow mocking APIs with a real HTTP server",
   "main": "index.js",
   "author": "Tim Wardle",
-  "license": "Unlicensed",
+  "license": "MIT",
   "private": true,
   "dependencies": {
     "express": "^4.17.1",
