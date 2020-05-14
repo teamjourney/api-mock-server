@@ -1,8 +1,8 @@
 import { difference } from 'lodash';
 
-import server from './src/server';
-import router from './src/router';
-import logger from './src/logger';
+import server from './server';
+import router from './router';
+import logger from './logger';
 
 const reset = () => {
   router.reset();

@@ -1,6 +1,6 @@
 import chakram, { expect } from 'chakram';
 
-import server from '../..';
+import server from '../../src';
 
 describe('Feature: Start', () => {
   beforeEach(() => {

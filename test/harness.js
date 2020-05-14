@@ -1,6 +1,6 @@
 import chakram from 'chakram';
 
-import server from '..';
+import server from '../src';
 
 const defaultPort = 9100;
 

@@ -1,16 +1,16 @@
 {
-  "name": "api-mock-server",
-  "version": "1.0.0",
+  "name": "@teamjourney/api-mock-server",
+  "version": "0.1-alpha",
   "description": "Tool to allow mocking APIs with a real HTTP server",
-  "main": "index.js",
+  "main": "lib/index.js",
   "author": "Tim Wardle",
   "license": "MIT",
-  "private": true,
   "dependencies": {
     "express": "^4.17.1",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
     "@babel/register": "^7.9.0",
@@ -26,7 +26,8 @@
   "scripts": {
     "test": "mocha --",
     "lint": "eslint . --",
-    "readme": "doctoc --github --title '**Table of Contents**' README.md"
+    "readme": "doctoc --github --title '**Table of Contents**' README.md",
+    "build": "babel src --out-dir lib"
   },
   "husky": {
     "hooks": {
