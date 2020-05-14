@@ -1,6 +1,6 @@
 {
   "name": "@teamjourney/api-mock-server",
-  "version": "0.1-alpha",
+  "version": "0.1.0",
   "description": "Tool to allow mocking APIs with a real HTTP server",
   "main": "lib/index.js",
   "author": "Tim Wardle",

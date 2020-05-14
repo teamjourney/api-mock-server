@@ -53,7 +53,15 @@ such as [Mocha](https://mochajs.org/) or [Jasmine](https://jasmine.github.io/).
 
 ## Install
 
-TBC
+```sh
+npm install --save-dev @teamjourney/api-mock-server
+```
+
+or
+
+```sh
+yarn add --dev @teamjourney/api-mock-server
+```
 
 ### Node version support
 
