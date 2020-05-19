@@ -69,8 +69,10 @@ Tested on Node.js 10.x and 12.x
 
 ## Usage
 
+### NodeJS
+
 ```javascript
-const server = require('@teamjourney/api-mock-server');
+const server = require('@teamjourney/api-mock-server').default;
 
 server.start(9001)
     .then(() => {
@@ -84,6 +86,28 @@ server.start(9001)
 
         server.stop();
     });
+```
+
+### ES6
+
+```javascript
+import server from '@teamjourney/api-mock-server';
+
+const init = async () => {
+    await server.start(9001);
+
+    server.mock(
+        { path: '/my-endpoint' },
+        { body: { data: 'something' } },
+    );
+
+    // Call GET http://localhost:9001/my-endpoint here
+    // It will return with a JSON body of { data: 'something' }
+
+    server.stop();
+};
+
+init();
 ```
 
 ### Starting the server
