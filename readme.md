@@ -70,7 +70,7 @@ Tested on Node.js 10.x and 12.x
 ## Usage
 
 ```javascript
-const server = require('api-mock-server');
+const server = require('@teamjourney/api-mock-server');
 
 server.start(9001)
     .then(() => {
