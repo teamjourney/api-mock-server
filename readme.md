@@ -13,6 +13,8 @@ calling the real service and allows full control over the request and responses.
 - [Install](#install)
   - [Node version support](#node-version-support)
 - [Usage](#usage)
+  - [NodeJS](#nodejs)
+  - [ES6](#es6)
   - [Starting the server](#starting-the-server)
   - [Stopping the server](#stopping-the-server)
   - [Resetting the server](#resetting-the-server)
@@ -147,6 +149,18 @@ requests.
 ```javascript
 server.reset();
 ```
+
+It's also possible to reset specific mocks by passing an array to `reset`.
+
+```javascript
+server.reset([ { path: '/my-endpoint' } ]);
+```
+
+This will remove the mock as well as removing it from the uncalled mocks list.
+If the mock has been called however, it will still appear in the called mocks
+list.
+
+When trying to reset a mock that doesn't exist then an error will be thrown.
 
 ### Defining mocks
 

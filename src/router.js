@@ -4,6 +4,7 @@ import { groupBy, forIn, find } from 'lodash';
 import { normalizeRequest, normalizeResponse } from './normalizer';
 import handler from './handler';
 import logger from './logger';
+import matches from './matcher';
 
 let routes = [];
 let router;
@@ -48,8 +49,25 @@ const add = (request, response) => {
 
 const get = () => routes;
 
-const reset = () => {
-  routes = [];
+const reset = (requests) => {
+  if (requests) {
+    requests.forEach((request) => {
+      const normalized = normalizeRequest(request);
+
+      const index = routes.findIndex((route) => (normalized.path === route.request.path
+        && normalized.method === route.request.method
+        && matches(normalized, route.request)));
+
+      if (index === -1) {
+        throw Error(`Request matching ${JSON.stringify(normalized, 0, 2)} was not mocked`);
+      }
+
+      routes.splice(index, 1);
+    });
+  } else {
+    routes = [];
+  }
+
   build();
 };
 

@@ -4,10 +4,11 @@ import server from './server';
 import router from './router';
 import logger from './logger';
 
-const reset = () => {
-  router.reset();
-  logger.reset();
+const reset = (requests) => {
+  router.reset(requests);
+  logger.reset(requests);
 };
+
 const start = (port) => server.start(port);
 const stop = () => {
   reset();
