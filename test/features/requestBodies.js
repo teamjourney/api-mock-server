@@ -96,4 +96,16 @@ describe('Feature: Request bodies', () => {
     expect(firstResponse).to.have.status(200);
     expect(secondResponse).to.have.status(201);
   });
+
+  it('should support URL encoded request bodies', async () => {
+    server.mock(
+      { path: '/something', body: { data: 'something' } },
+    );
+
+    const firstResponse = await chakram.post('/something', null, { json: false, form: { data: 'something' } });
+    const secondResponse = await chakram.post('/something', null, { json: false, form: { data: 'something else' } });
+
+    expect(firstResponse).to.have.status(200);
+    expect(secondResponse).to.have.status(501);
+  });
 });

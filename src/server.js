@@ -5,6 +5,7 @@ let server;
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded());
 app.use(middleware);
 
 const start = async (port) => {
