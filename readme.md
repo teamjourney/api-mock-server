@@ -160,7 +160,7 @@ This will remove the mock as well as removing it from the uncalled mocks list.
 If the mock has been called however, it will still appear in the called mocks
 list.
 
-When trying to reset a mock that doesn't exist then an error will be thrown.
+Trying to reset a mock that doesn't exist will fail silently.
 
 ### Defining mocks
 

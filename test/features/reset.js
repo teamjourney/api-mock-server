@@ -76,12 +76,16 @@ describe('Feature: Reset', () => {
     assert.deepEqual([], server.getUncalledMocks());
   });
 
-  it('should throw an error if no mock exists', () => {
-    const message = `Request matching {
-  "method": "GET",
-  "path": "/my-endpoint"
-} was not mocked`;
+  it('should not throw an error if no mock exists', () => {
+    server.mock({ path: '/my-endpoint' });
 
-    assert.throws(() => server.reset([{ path: '/my-endpoint' }]), message);
+    server.reset([{ path: '/another-endpoint' }]);
+
+    const expected = [{
+      request: { method: 'GET', path: '/my-endpoint' },
+      response: { status: 200 },
+    }];
+
+    assert.deepEqual(expected, server.getUncalledMocks());
   });
 });

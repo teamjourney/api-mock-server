@@ -54,15 +54,9 @@ const reset = (requests) => {
     requests.forEach((request) => {
       const normalized = normalizeRequest(request);
 
-      const index = routes.findIndex((route) => (normalized.path === route.request.path
+      routes = routes.filter((route) => !(normalized.path === route.request.path
         && normalized.method === route.request.method
         && matches(normalized, route.request)));
-
-      if (index === -1) {
-        throw Error(`Request matching ${JSON.stringify(normalized, 0, 2)} was not mocked`);
-      }
-
-      routes.splice(index, 1);
     });
   } else {
     routes = [];
