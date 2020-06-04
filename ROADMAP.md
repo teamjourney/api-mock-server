@@ -8,7 +8,10 @@
 - [ ] Introduce Prettier, with automation
 - [ ] Add badges to readme
 
-## v0.2
+## v0.3
+- [x] Request proxying
+
+## v0.3
 
 - [ ] assertNoUnhandledRequests
 - [ ] assertNoUncalledMocks
@@ -16,21 +19,17 @@
 - [ ] Support non-string query object values
 - [ ] Check that headers are not case sensitive
 
-## v0.3
+## v0.4
 
 - [ ] expectations
 - [ ] expectation counts
 - [ ] assertExpectedRequests
 
-## v0.4
+## v0.5
 
 - [ ] Sequential responses
 - [ ] Request suggestions
 
-## 0.5
-
-- [ ] Request proxying
-
-## 0.6
+## v0.6
 
 - [ ] SOAP support
