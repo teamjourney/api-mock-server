@@ -27,12 +27,6 @@ export default class Router {
         this.addToRouter(path, method, routesForMethod);
       });
     });
-
-    this.router.all('*', (request, response) => {
-      this.logger.logUnhandledRequest(request);
-
-      response.status(501).end();
-    });
   }
 
   add(request, response) {
@@ -75,5 +69,11 @@ export default class Router {
     }
 
     this.router(request, response, next);
+  }
+
+  catchAllMiddleware(request, response) {
+    this.logger.logUnhandledRequest(request);
+
+    response.status(501).end();
   }
 }

@@ -23,6 +23,18 @@ const convertExpressRequestToMockRequest = (expressRequest) => {
   return request;
 };
 
+const convertProxiedResponseToMockResponse = (proxiedResponse, proxiedResponseBody) => {
+  const body = proxiedResponseBody.toString('utf8');
+
+  const response = {
+    status: proxiedResponse.statusCode,
+    headers: proxiedResponse.headers,
+    body: body ? JSON.parse(body) : body,
+  };
+
+  return response;
+};
+
 export default class Logger {
   constructor() {
     this.reset();
@@ -31,6 +43,13 @@ export default class Logger {
   logUnhandledRequest(expressRequest) {
     this.unhandledRequests.push({
       request: convertExpressRequestToMockRequest(expressRequest),
+    });
+  }
+
+  logProxiedRequest(expressRequest, proxiedResponse, proxiedResponseBody) {
+    this.proxiedRequests.push({
+      request: convertExpressRequestToMockRequest(expressRequest),
+      response: convertProxiedResponseToMockResponse(proxiedResponse, proxiedResponseBody),
     });
   }
 
@@ -46,8 +65,13 @@ export default class Logger {
     return this.handledRequests;
   }
 
+  getProxiedRequests() {
+    return this.proxiedRequests;
+  }
+
   reset() {
     this.unhandledRequests = [];
     this.handledRequests = [];
+    this.proxiedRequests = [];
   }
 }

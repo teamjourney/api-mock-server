@@ -15,6 +15,7 @@ calling the real service and allows full control over the request and responses.
 - [Usage](#usage)
   - [NodeJS](#nodejs)
   - [ES6](#es6)
+  - [Multiple instances (optional)](#multiple-instances-optional)
   - [Starting the server](#starting-the-server)
   - [Stopping the server](#stopping-the-server)
   - [Resetting the server](#resetting-the-server)
@@ -415,6 +416,28 @@ For example:
     }
 ]
 ```
+
+### Proxying requests
+
+In some situations it maybe useful to be able to proxy requests that aren't
+mocked to a real server.
+
+```javascript
+server.start(9001, 'http://realserver.com');
+```
+
+When a request is proxied the mock server will return the response exactly
+as it was returned by the real server.
+
+Both the request and the response are recorded and are available via the
+`getProxiedRequests` method.
+
+```javascript
+server.getProxiedRequests();
+```
+
+Any mocks that match will be handled first and those requests won't be proxied.
+This allows for selective mocking of APIs.
 
 ## Current Limitations
 
