@@ -1,7 +1,6 @@
 import matches from './matcher';
-import logger from './logger';
 
-export default (possibleMatches) => (actualRequest, actualResponse) => {
+export default (possibleMatches, logger) => (actualRequest, actualResponse) => {
   const match = possibleMatches.find(
     (possibleMatch) => matches(possibleMatch.request, actualRequest),
   );

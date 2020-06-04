@@ -1,80 +1,79 @@
-import { Router } from 'express';
+import { Router as ExpressRouter } from 'express';
 import { groupBy, forIn, find } from 'lodash';
 
 import { normalizeRequest, normalizeResponse } from './normalizer';
 import handler from './handler';
-import logger from './logger';
 import matches from './matcher';
 
-let routes = [];
-let router;
+export default class Router {
+  constructor(logger) {
+    this.logger = logger;
+    this.routes = [];
+  }
 
-const addToRouter = (path, method, possibleRoutes) => {
-  router[method.toLowerCase()](path, handler(possibleRoutes));
-};
+  addToRouter(path, method, possibleRoutes) {
+    this.router[method.toLowerCase()](path, handler(possibleRoutes, this.logger));
+  }
 
-const build = () => {
-  router = Router();
+  build() {
+    this.router = ExpressRouter();
 
-  const byPath = groupBy(routes, 'request.path');
+    const byPath = groupBy(this.routes, 'request.path');
 
-  forIn(byPath, (routesForPath, path) => {
-    const byMethod = groupBy(routesForPath, 'request.method');
+    forIn(byPath, (routesForPath, path) => {
+      const byMethod = groupBy(routesForPath, 'request.method');
 
-    forIn(byMethod, (routesForMethod, method) => {
-      addToRouter(path, method, routesForMethod);
+      forIn(byMethod, (routesForMethod, method) => {
+        this.addToRouter(path, method, routesForMethod);
+      });
     });
-  });
 
-  router.all('*', (request, response) => {
-    logger.logUnhandledRequest(request);
+    this.router.all('*', (request, response) => {
+      this.logger.logUnhandledRequest(request);
 
-    response.status(501).end();
-  });
-};
-
-const add = (request, response) => {
-  const normalized = {
-    request: normalizeRequest(request),
-    response: normalizeResponse(response),
-  };
-
-  if (find(routes, normalized)) {
-    throw Error(`Request matching ${JSON.stringify(normalized.request, 0, 2)} already mocked`);
-  }
-
-  routes.push(normalized);
-  build();
-};
-
-const get = () => routes;
-
-const reset = (requests) => {
-  if (requests) {
-    requests.forEach((request) => {
-      const normalized = normalizeRequest(request);
-
-      routes = routes.filter((route) => !(normalized.path === route.request.path
-        && normalized.method === route.request.method
-        && matches(normalized, route.request)));
+      response.status(501).end();
     });
-  } else {
-    routes = [];
   }
 
-  build();
-};
+  add(request, response) {
+    const normalized = {
+      request: normalizeRequest(request),
+      response: normalizeResponse(response),
+    };
 
-export const middleware = (request, response, next) => {
-  if (!router) {
-    build();
+    if (find(this.routes, normalized)) {
+      throw Error(`Request matching ${JSON.stringify(normalized.request, 0, 2)} already mocked`);
+    }
+
+    this.routes.push(normalized);
+    this.build();
   }
 
-  router(request, response, next);
-};
+  get() {
+    return this.routes;
+  }
 
-export default {
-  add,
-  get,
-  reset,
-};
+  reset(requests) {
+    if (requests) {
+      requests.forEach((request) => {
+        const normalized = normalizeRequest(request);
+
+        this.routes = this.routes.filter((route) => !(normalized.path === route.request.path
+          && normalized.method === route.request.method
+          && matches(normalized, route.request)));
+      });
+    } else {
+      this.routes = [];
+    }
+
+    this.build();
+  }
+
+  middleware(request, response, next) {
+    if (!this.router) {
+      this.build();
+    }
+
+    this.router(request, response, next);
+  }
+}

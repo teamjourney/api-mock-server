@@ -112,6 +112,23 @@ const init = async () => {
 init();
 ```
 
+### Multiple instances (optional)
+
+It's possible (but optional) to create multiple instances of the mock server
+running on different ports, each with their own routes and logging.
+
+Use instances of the `MockServer` class to achieve this. The below example is
+in ES6 for simplicity.
+
+```javascript
+import { MockServer } from '@teamjourney/api-mock-server';
+
+const server = new MockServer();
+```
+
+`MockServer` has the same interface as the core library functions so all of the
+below functions should work.
+
 ### Starting the server
 
 Calling `start` with a port number allows you to specify a port.

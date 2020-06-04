@@ -2,9 +2,6 @@ import { isEmpty, omit } from 'lodash';
 
 const ignoredHeaders = ['accept', 'connection', 'host', 'content-length', 'content-type'];
 
-let unhandledRequests = [];
-let handledRequests = [];
-
 const convertExpressRequestToMockRequest = (expressRequest) => {
   const request = {
     path: expressRequest.path,
@@ -26,29 +23,31 @@ const convertExpressRequestToMockRequest = (expressRequest) => {
   return request;
 };
 
-const logUnhandledRequest = (expressRequest) => {
-  unhandledRequests.push({
-    request: convertExpressRequestToMockRequest(expressRequest),
-  });
-};
+export default class Logger {
+  constructor() {
+    this.reset();
+  }
 
-const logHandledRequest = (match) => {
-  handledRequests.push(match);
-};
+  logUnhandledRequest(expressRequest) {
+    this.unhandledRequests.push({
+      request: convertExpressRequestToMockRequest(expressRequest),
+    });
+  }
 
-const getUnhandledRequests = () => unhandledRequests;
+  logHandledRequest(match) {
+    this.handledRequests.push(match);
+  }
 
-const getHandledRequests = () => handledRequests;
+  getUnhandledRequests() {
+    return this.unhandledRequests;
+  }
 
-const reset = () => {
-  unhandledRequests = [];
-  handledRequests = [];
-};
+  getHandledRequests() {
+    return this.handledRequests;
+  }
 
-export default {
-  logUnhandledRequest,
-  logHandledRequest,
-  getUnhandledRequests,
-  getHandledRequests,
-  reset,
-};
+  reset() {
+    this.unhandledRequests = [];
+    this.handledRequests = [];
+  }
+}

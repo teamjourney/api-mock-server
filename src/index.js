@@ -1,30 +1,59 @@
 import { difference } from 'lodash';
 
-import server from './server';
-import router from './router';
-import logger from './logger';
+import Server from './server';
+import Router from './router';
+import Logger from './logger';
 
-const reset = (requests) => {
-  router.reset(requests);
-  logger.reset(requests);
-};
+export class MockServer {
+  constructor() {
+    this.logger = new Logger();
+    this.router = new Router(this.logger);
+    this.server = new Server(this.router);
+  }
+
+  start(port) {
+    return this.server.start(port);
+  }
+
+  stop() {
+    this.reset();
+    this.server.stop();
+  }
+
+  mock(request, response) {
+    this.router.add(request, response);
+  }
+
+  reset(requests) {
+    this.router.reset(requests);
+    this.logger.reset();
+  }
+
+  getUnhandledRequests() {
+    return this.logger.getUnhandledRequests();
+  }
+
+  getHandledRequests() {
+    return this.logger.getHandledRequests();
+  }
+
+  getUncalledMocks() {
+    const handled = this.logger.getHandledRequests();
+    const mocked = this.router.get();
+
+    return difference(mocked, handled);
+  }
+}
+
+const server = new MockServer();
 
 const start = (port) => server.start(port);
-const stop = () => {
-  reset();
-  server.stop();
-};
-
-const mock = (request, response) => router.add(request, response);
-
-const getUnhandledRequests = () => logger.getUnhandledRequests();
-const getHandledRequests = () => logger.getHandledRequests();
-const getUncalledMocks = () => {
-  const handled = logger.getHandledRequests();
-  const mocked = router.get();
-
-  return difference(mocked, handled);
-};
+const stop = () => server.stop();
+const reset = (requests) => server.reset(requests);
+const mock = (request, response) => server.mock(request, response);
+const getUnhandledRequests = () => server.getUnhandledRequests();
+const getHandledRequests = () => server.getHandledRequests();
+const getUncalledMocks = () => server.getUncalledMocks();
 
 export default {
   start,

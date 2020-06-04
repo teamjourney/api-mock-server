@@ -1,21 +1,20 @@
 import express from 'express';
-import { middleware } from './router';
 
-let server;
+export default class Server {
+  constructor(router) {
+    this.app = express();
+    this.app.use(express.json());
+    this.app.use(express.urlencoded());
+    this.app.use(router.middleware.bind(router));
+  }
 
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(middleware);
+  async start(port) {
+    this.server = await this.app.listen(port);
 
-const start = async (port) => {
-  server = await app.listen(port);
+    return this.server;
+  }
 
-  return server;
-};
-const stop = () => server.close();
-
-export default {
-  start,
-  stop,
-};
+  stop() {
+    this.server.close();
+  }
+}
