@@ -36,6 +36,7 @@ calling the real service and allows full control over the request and responses.
     - [Getting unhandled requests](#getting-unhandled-requests)
     - [Getting handled requests](#getting-handled-requests)
     - [Getting uncalled mocks](#getting-uncalled-mocks)
+  - [Proxying requests](#proxying-requests)
 - [Current Limitations](#current-limitations)
 - [Credits](#credits)
 - [License](#license)
