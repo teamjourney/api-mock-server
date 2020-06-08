@@ -8,6 +8,7 @@ export default class Server {
 
   async start(port, proxyBaseUrl) {
     this.app = express();
+
     this.app.use(express.json());
     this.app.use(express.urlencoded());
     this.app.use(this.router.middleware.bind(this.router));

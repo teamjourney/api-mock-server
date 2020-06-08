@@ -1,6 +1,8 @@
 import chakram, { expect } from 'chakram';
 import chai, { assert } from 'chai';
 import chaiSubset from 'chai-subset';
+import express from 'express';
+import { isEqual } from 'lodash';
 
 import { MockServer } from '../../src';
 
@@ -63,6 +65,29 @@ describe('Feature: Proxying', () => {
     const response = await chakram.get('/');
 
     expect(response).to.have.status(501);
+  });
+
+  it('should preserve URL encoding when proxying if set', async () => {
+    proxiedServer.stop();
+
+    const app = express();
+    app.use(express.urlencoded());
+    app.post('/', (request, response) => {
+      if (isEqual(request.body, { data: 'something' })) {
+        response.status(200).end();
+      }
+
+      response.status(500).end();
+    });
+
+    const server = await app.listen(proxiedPort);
+
+    const response = await chakram.post('/', null, { json: false, form: { data: 'something' } });
+
+    server.close();
+    await proxiedServer.start(proxiedPort);
+
+    expect(response).to.have.status(200);
   });
 
   it('should still handle mocked requests', async () => {

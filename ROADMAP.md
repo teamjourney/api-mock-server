@@ -8,7 +8,7 @@
 - [ ] Introduce Prettier, with automation
 - [ ] Add badges to readme
 
-## v0.3
+## v0.2
 - [x] Request proxying
 
 ## v0.3

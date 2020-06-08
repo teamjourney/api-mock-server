@@ -12,6 +12,15 @@ export default class Proxy {
 
         return proxiedResponseData;
       },
+      onProxyReq(_proxyRequest, request) {
+        // Clear any request body added by previous middleware so that raw request
+        // body is proxied and encodings are honoured.
+        if (request.body) {
+          delete request.body;
+        }
+
+        return request;
+      },
     });
   }
 }
