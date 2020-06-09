@@ -2,6 +2,19 @@ import { isEmpty, omit } from 'lodash';
 
 const ignoredHeaders = ['accept', 'connection', 'host', 'content-length', 'content-type'];
 
+const parseResponseBody = (response) => new Promise((resolve) => {
+  let body = '';
+  response.on('data', (chunk) => {
+    body = chunk;
+  });
+
+  response.on('end', () => {
+    const json = body.toString() ? JSON.parse(body.toString()) : null;
+
+    resolve(json);
+  });
+});
+
 const convertExpressRequestToMockRequest = (expressRequest) => {
   const request = {
     path: expressRequest.path,
@@ -23,13 +36,11 @@ const convertExpressRequestToMockRequest = (expressRequest) => {
   return request;
 };
 
-const convertProxiedResponseToMockResponse = (proxiedResponse, proxiedResponseBody) => {
-  const body = proxiedResponseBody.toString('utf8');
-
+const convertProxiedResponseToMockResponse = async (proxiedResponse) => {
   const response = {
     status: proxiedResponse.statusCode,
     headers: proxiedResponse.headers,
-    body: body ? JSON.parse(body) : body,
+    body: await parseResponseBody(proxiedResponse),
   };
 
   return response;
@@ -46,10 +57,10 @@ export default class Logger {
     });
   }
 
-  logProxiedRequest(expressRequest, proxiedResponse, proxiedResponseBody) {
+  async logProxiedRequest(expressRequest, proxiedResponse) {
     this.proxiedRequests.push({
       request: convertExpressRequestToMockRequest(expressRequest),
-      response: convertProxiedResponseToMockResponse(proxiedResponse, proxiedResponseBody),
+      response: await convertProxiedResponseToMockResponse(proxiedResponse),
     });
   }
 

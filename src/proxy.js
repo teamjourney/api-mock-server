@@ -1,4 +1,5 @@
-import proxy from 'express-http-proxy';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import querystring from 'querystring';
 
 export default class Proxy {
   constructor(logger) {
@@ -6,11 +7,30 @@ export default class Proxy {
   }
 
   middleware(proxyBaseUrl) {
-    return proxy(proxyBaseUrl, {
-      userResDecorator: (proxiedResponse, proxiedResponseData, request) => {
-        this.logger.logProxiedRequest(request, proxiedResponse, proxiedResponseData);
+    return createProxyMiddleware({
+      target: proxyBaseUrl,
+      logLevel: 'silent',
+      onProxyReq: (proxyRequest, request) => {
+        if (!request.body || !Object.keys(request.body).length) {
+          return;
+        }
 
-        return proxiedResponseData;
+        const contentType = proxyRequest.getHeader('Content-Type');
+        const writeBody = (bodyData) => {
+          proxyRequest.setHeader('Content-Length', Buffer.byteLength(bodyData));
+          proxyRequest.write(bodyData);
+        };
+
+        if (contentType === 'application/json') {
+          writeBody(JSON.stringify(request.body));
+        }
+
+        if (contentType === 'application/x-www-form-urlencoded') {
+          writeBody(querystring.stringify(request.body));
+        }
+      },
+      onProxyRes: async (proxyResponse, request) => {
+        await this.logger.logProxiedRequest(request, proxyResponse);
       },
     });
   }

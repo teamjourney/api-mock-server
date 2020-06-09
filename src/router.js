@@ -1,4 +1,4 @@
-import express, { Router as ExpressRouter } from 'express';
+import { Router as ExpressRouter } from 'express';
 import { groupBy, forIn, find } from 'lodash';
 
 import { normalizeRequest, normalizeResponse } from './normalizer';
@@ -14,8 +14,6 @@ export default class Router {
   addToRouter(path, method, possibleRoutes) {
     this.router[method.toLowerCase()](
       path,
-      express.json(),
-      express.urlencoded({ extended: true }),
       handler(possibleRoutes, this.logger),
     );
   }
