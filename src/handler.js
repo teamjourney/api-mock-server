@@ -1,6 +1,6 @@
 import matches from './matcher';
 
-export default (possibleMatches, logger) => (actualRequest, actualResponse) => {
+export default (possibleMatches, logger) => (actualRequest, actualResponse, next) => {
   const match = possibleMatches.find(
     (possibleMatch) => matches(possibleMatch.request, actualRequest),
   );
@@ -15,5 +15,5 @@ export default (possibleMatches, logger) => (actualRequest, actualResponse) => {
 
   logger.logUnhandledRequest(actualRequest);
 
-  return actualResponse.status(501).end();
+  return next();
 };

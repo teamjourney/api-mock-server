@@ -71,7 +71,7 @@ describe('Feature: Proxying', () => {
     proxiedServer.stop();
 
     const app = express();
-    app.use(express.urlencoded());
+    app.use(express.urlencoded({ extended: true }));
     app.post('/', (request, response) => {
       if (isEqual(request.body, { data: 'something' })) {
         response.status(200).end();
@@ -97,6 +97,15 @@ describe('Feature: Proxying', () => {
     const response = await chakram.get('/');
 
     expect(response).to.have.status(204);
+  });
+
+  it('should proxy requests that match a route but not request shape', async () => {
+    proxiedServer.mock({ path: '/', body: { data: 'something' } }, { status: 201 });
+    mockServer.mock({ path: '/', body: { data: 'something else' } }, { status: 204 });
+
+    const response = await chakram.post('/', { data: 'something' });
+
+    expect(response).to.have.status(201);
   });
 
   it('should record proxied requests', async () => {
