@@ -29,7 +29,8 @@
     "test": "mocha --",
     "lint": "eslint . --",
     "readme": "doctoc --github --title '**Table of Contents**' README.md",
-    "build": "babel src --out-dir lib"
+    "build": "babel src --out-dir lib",
+    "prepublishOnly": "yarn build"
   },
   "husky": {
     "hooks": {
