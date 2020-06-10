@@ -1,5 +1,5 @@
 import { createProxyMiddleware } from 'http-proxy-middleware';
-import querystring from 'querystring';
+import qs from 'qs';
 
 export default class Proxy {
   constructor(logger) {
@@ -27,7 +27,7 @@ export default class Proxy {
         }
 
         if (contentType === 'application/x-www-form-urlencoded') {
-          writeBody(querystring.stringify(request.body));
+          writeBody(qs.stringify(request.body));
         }
       },
       onProxyRes: async (proxyResponse, request) => {
