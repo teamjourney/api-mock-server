@@ -10,6 +10,7 @@ export default class Proxy {
     return createProxyMiddleware({
       target: proxyBaseUrl,
       logLevel: 'silent',
+      changeOrigin: true,
       onProxyReq: (proxyRequest, request) => {
         if (!request.body || !Object.keys(request.body).length) {
           return;

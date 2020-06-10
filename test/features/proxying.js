@@ -135,4 +135,23 @@ describe('Feature: Proxying', () => {
 
     assert.containSubset(requests, expected);
   });
+
+  describe('Proxing to other sources', () => {
+    beforeEach(() => {
+      mockServer.stop();
+    });
+
+    afterEach(async () => {
+      mockServer.stop();
+      await mockServer.start(mockPort, `http://localhost:${proxiedPort}`);
+    });
+
+    it('should proxy from HTTP to HTTPS', async () => {
+      await mockServer.start(mockPort, 'https://dog.ceo/api');
+
+      const response = await chakram.get('/breeds/image/random');
+
+      expect(response).to.have.status(200);
+    });
+  });
 });
